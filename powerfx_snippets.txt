@@ -1,0 +1,42 @@
+// Submit a form and navigate to confirmation
+SubmitForm(frmCandidate);
+If(frmCandidate.Error, Notify("Save failed: " & frmCandidate.Error, NotificationType.Error), Navigate(scrConfirmation, ScreenTransition.Fade))
+
+// Patch example to create candidate
+Patch(
+  Candidates,
+  Defaults(Candidates),
+  {
+    firstName: txtFirstName.Text,
+    lastName: txtLastName.Text,
+    email: txtEmail.Text,
+    phone: txtPhone.Text,
+    positionApplied: ddPosition.Selected.Value,
+    status: "Applied",
+    createdOn: Now()
+  }
+)
+
+// Filter tasks assigned to current user
+Filter(OnboardingTasks, assignedTo = User().Email && status <> "Completed")
+
+// Mark task as completed
+Patch(OnboardingTasks, ThisItem, {status: "Completed", completedOn: Now()})
+
+// Disable submit until mandatory fields filled
+btnSubmit.DisplayMode = If(IsBlank(txtFirstName.Text) || IsBlank(txtEmail.Text), DisplayMode.Disabled, DisplayMode.Edit)
+
+// Upload file to SharePoint & call Power Automate (flow) to create Documents row
+// Assuming you have a flow called 'Flow_CreateDocument' that accepts file content
+Set(varFile, UploadControl.Attachments);
+ForAll(varFile,
+  'Flow_CreateDocument'.Run(
+     ThisRecord.Name,
+     ThisRecord.Link, // or file content
+     txtCandidateId.Text,
+     ddDocType.Selected.Value
+  )
+);
+
+// Show a status badge text
+If(ThisItem.status="Completed","Completed","Pending")
