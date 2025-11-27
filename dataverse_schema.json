@@ -1,0 +1,58 @@
+{
+  "tables": [
+    {
+      "name": "Candidates",
+      "displayName": "Candidates",
+      "columns": [
+        {"name":"candidateid","type":"GUID","pk":true},
+        {"name":"firstName","type":"String"},
+        {"name":"lastName","type":"String"},
+        {"name":"email","type":"String"},
+        {"name":"phone","type":"String"},
+        {"name":"positionApplied","type":"String"},
+        {"name":"status","type":"Choice","choices":["Applied","Offered","Accepted","Onboarding","Completed","Rejected"]},
+        {"name":"source","type":"String"},
+        {"name":"resumeUrl","type":"String"},
+        {"name":"createdOn","type":"DateTime"}
+      ]
+    },
+    {
+      "name":"OnboardingTasks",
+      "displayName":"Onboarding Tasks",
+      "columns":[
+        {"name":"taskid","type":"GUID","pk":true},
+        {"name":"candidateid","type":"GUID","relation":"Candidates(candidateid)"},
+        {"name":"title","type":"String"},
+        {"name":"description","type":"String"},
+        {"name":"assignedTo","type":"String"},
+        {"name":"dueDate","type":"DateTime"},
+        {"name":"status","type":"Choice","choices":["Pending","InProgress","Completed","Blocked"]}
+      ]
+    },
+    {
+      "name":"EmployeeAssets",
+      "displayName":"Employee Assets",
+      "columns":[
+        {"name":"assetid","type":"GUID","pk":true},
+        {"name":"candidateid","type":"GUID","relation":"Candidates(candidateid)"},
+        {"name":"assetType","type":"String"},
+        {"name":"serialNumber","type":"String"},
+        {"name":"issuedDate","type":"DateTime"},
+        {"name":"status","type":"Choice","choices":["Allocated","Returned","Lost"]}
+      ]
+    },
+    {
+      "name":"Documents",
+      "displayName":"Onboarding Documents",
+      "columns":[
+        {"name":"documentid","type":"GUID","pk":true},
+        {"name":"candidateid","type":"GUID","relation":"Candidates(candidateid)"},
+        {"name":"documentType","type":"String"},
+        {"name":"fileUrl","type":"String"},
+        {"name":"uploadedBy","type":"String"},
+        {"name":"uploadedOn","type":"DateTime"},
+        {"name":"validated","type":"Boolean"}
+      ]
+    }
+  ]
+}
